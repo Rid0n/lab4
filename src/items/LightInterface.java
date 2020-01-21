@@ -1,7 +1,8 @@
 package items;
 
 public interface LightInterface {
-    void activate();
-    void deactivate();
-    boolean isActive();
+    public void activate();
+    public void deactivate();
+
+    public boolean isActive();
 }

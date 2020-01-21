@@ -2,11 +2,11 @@ package mapping;
 
 public enum LightLevel {
 
-    OchBlizko("Очень ярко"),
-    Blizko("Ярко"),
-    NetakNeedak("Нормально"),
-    Daleko("Довольно тускло"),
-    OchenDaleko("Темень сплошная");
+    OCH_BLIZKO("Очень ярко"),
+    BLIZKO("Ярко"),
+    NETAK_NEEDAK("Нормально"),
+    DALEKO("Довольно тускло"),
+    OCHEN_DALEKO("Темень сплошная");
 
 
 

@@ -2,13 +2,13 @@ package items;
 
 import entities.Entity;
 
-public class SittableOnItem extends ItemMultiplied {
+public class SittableOnItem extends Matter {
     private String material;
     private String type;
     private int legNumber;
     private boolean isSatOn;
-    public SittableOnItem(int x, int x2,int y,int y2, String material, String type, int legNumber){
-        super(x,x2,y,y2,type);
+    public SittableOnItem(int x, int y, String material, String type, int legNumber){
+        super(x,y,type);
         this.material = material;
         this.legNumber = legNumber;
     }
@@ -17,7 +17,7 @@ public class SittableOnItem extends ItemMultiplied {
     }
     public void sit(Entity Character){
         this.isSatOn = true;
-        Character.moveTo(getX(),getY());
+        Character.setPosition(getX(),getY());
     }
     public void standUp(){
         this.isSatOn = false;

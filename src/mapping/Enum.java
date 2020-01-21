@@ -1,10 +1,10 @@
 package mapping;
 
 public enum Enum {
-    Wall("Стена"),
-    Surface("Поверхность"),
-    Air("Воздух");
-    final String description;
+    WALL("Стена"),
+    SURFACE("Поверхность"),
+    AIR("Воздух");
+    private final String description;
     private Enum(String p){
         description = p;
     }

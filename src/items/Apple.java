@@ -19,7 +19,7 @@ public class Apple extends Matter {
         return isBaked;
     }
 
-    static int appleCount;
+
 
     public int showAppleSize(){
         return size;

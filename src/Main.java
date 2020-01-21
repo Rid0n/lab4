@@ -1,74 +1,110 @@
 import entities.*;
-
+import items.BirchFirewood;
 import items.*;
+
+import mapping.Environment;
 import mapping.Prostranstvo;
+import mapping.TimeOfDay;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
+
 
 
 public class Main {
     public static void main(String[] args){
-        Action act = new Action() {
+        Environment environment = new Environment() {
+            public int actions(Supplier<Integer> f) {
+                return f.get();
+            }
+            TimeOfDay dayTime = TimeOfDay.DAY;
+            //private ArrayList<Object> Changeable_vars = new ArrayList<Object>();
             private ArrayList<DepletableLightSource> Light_sources = new ArrayList<DepletableLightSource>();
+
             @Override
-            public void addLightToList(DepletableLightSource dls){
+            public void addLightToList(DepletableLightSource dls) {
                 Light_sources.add(dls);
-            }//anon
+            }
+
             @Override
             public void refreshEnvironment() {
                 for (DepletableLightSource i : Light_sources) {
                     i.burn_fuel();
                 }
             }
+            @Override
+            public TimeOfDay timeOfDay(){
+                return dayTime;
+            }
+            @Override
+            public void setTimeOfDay(TimeOfDay timeOfDay){
+                this.dayTime = timeOfDay;
+            }
         };
+        Karlson karl = new Karlson(3,10,"Карлсон");
+        Entity mal = new Entity(17,2,"Малыш");
+        Entity vendor = new Entity(4,4,"Продавец Яблок");
+        Entity frekenBok = new Entity(1,1,"фрекен Бок");
 
-        Fireplace fireplace = new Fireplace(1,1,true,3);
-        act.addLightToList(fireplace);
+        Entity.Possessions karlPossessions = new Entity.Possessions();
+        Entity.Possessions juniorPossessions = new Entity.Possessions();
+        Entity.Possessions vendorPossessions = new Entity.Possessions();
+
+
+        Matter coins = new Matter(1,10,"Монетки");
+        AlarmClock alarm = new AlarmClock(2,2,true,"Kogsvort");
+        Wire wire = new Wire(5,10,3,3,"Проволока");
+        Apple apple1 = new Apple(13,6,1,"Яблоко 1");
+        Apple apple2 = new Apple(10,6,2,"Яблоко 2");
+        Apple apple3 = new Apple(14,3,3,"Яблоко 3");
+
+        Fireplace fireplace = new Fireplace(1,1,true,2);
+        environment.addLightToList(fireplace);
 
         BirchFirewood birch1 = new BirchFirewood(15,11,2);
         BirchFirewood birch2 = new BirchFirewood(16,12,2);
 
-        Wire wire = new Wire(5,10,3,3,"Provoloka");
+        KerosineLamp lamp = new KerosineLamp(48,22,false,30);
 
-        Apple apple1 = new Apple(14,6,1,"apple1");
-        Apple apple2 = new Apple(10,6,2,"apple2");
-        Apple apple3 = new Apple(14,3,3,"apple3");
+        Workbench workbench = new Workbench(29,49,1,7,"Верстак");
 
-        KerosineLamp lamp = new KerosineLamp(48,22,false,10);
+        Tool hammer = new Tool(2,4,"Молоток","Для большой ударной силы");
+        Tool scissors = new Tool( 1,5,"Ножницы","Чтобы что-нибудь разрезать");
+        Tool paper = new Tool(12,4,"Бумага", "Для ведения записей");
+
+        Prostranstvo map = new Prostranstvo(50,50);
+        Prostranstvo.Lighting lighting = map.new Lighting();
 
 
-        Workbench workbench = new Workbench(35,49,1,7,"workbench"); //learn to map big objects
+        karlPossessions.addItem(hammer);
+        karlPossessions.addItem(scissors);
+        karlPossessions.addItem(paper);
+        karlPossessions.addItem(coins);
+        karlPossessions.addItem(alarm);
 
-        Tool hammer = new Tool(5,6,"hammer","To provide strong blunt force");
-        Tool scissors = new Tool(7,6, "scissors","To cut through surfaces");
-        AlarmClock alarm = new AlarmClock(2,2,false,"Kogsvort");
+        vendorPossessions.addItem(apple1);
+        vendorPossessions.addItem(apple2);
+        vendorPossessions.addItem(apple3);
 
-        Karlson karl= new Karlson(6,3,"карлсон");
-        Entity junior = new Entity(7,2,"малыш");
-        Entity.Possessions juniorPossessions = junior.new Possessions();
-        Entity.Possessions karlPossessions = karl.new Possessions(hammer);
+//        map.addItemOnWorkbench(hammer,workbench,3);
+//        map.addItemOnWorkbench(scissors,workbench,5);
+//        map.addItemOnWorkbench(alarm,workbench,4);
+//        map.addItemOnWorkbench(paper,workbench,2);
 
-        SittableOnItem chair = new SittableOnItem(31,35,1,4,"Wood","chair",4);
+        workbench.addItem(alarm,6,map);
+        workbench.addItem(scissors,5,map);
+        workbench.addItem(paper,7,map);
+        workbench.addItem(hammer,3,map);
 
-        Prostranstvo map = new Prostranstvo();
+        System.out.println(workbench.getItemlist());
 
         try {
-            map.addOnMap(apple1);
-            map.addOnMap(apple2);
-            map.addOnMap(apple3);
             map.addOnMap(birch1);
             map.addOnMap(birch2);
-            map.addOnMap(hammer);
-            map.addMultlObjOnMap(chair);
-            map.addOnMap(scissors);
-            map.addOnMap(alarm);
-            map.addMultlObjOnMap(workbench);
-
-
-
+            map.addOnMap(mal);
+            map.addMultlObjOnMap(wire);
             map.addOnMap(karl);
-            map.addOnMap(junior);
-
+            map.addMultlObjOnMap(workbench);
         }
         catch (NotEnoughSpaceException ex){
             System.err.println("Место уже занято!");
@@ -77,96 +113,127 @@ public class Main {
             System.err.println("Объект размещён за пределами карты!");
         }
 
-        workbench.addItem(hammer, 1,map);
-        workbench.addItem(scissors, 2,map);
+        //start scenario
 
+
+        System.out.println(environment.timeOfDay());
+
+        frekenBok.talk("Как хорошо в спокойствии, вдали от буйных Малыша и Карлсона");
 
         map.showMap();
+        lighting.addIstSveta(fireplace,13);
+
+        karl.flySomewhere("улица Хетерге", map);
+
+        System.out.println("Карлсон улетел на улицу Хетерге");
+        environment.refreshEnvironment();
+        lighting.showLightMap();
+        karlPossessions.trade(vendorPossessions,apple1,coins);
+        karlPossessions.trade(vendorPossessions,apple2,coins);
+        karlPossessions.trade(vendorPossessions,apple3,coins);
+        System.out.println("Карлсон купил яблок, его предметы:");
+        System.out.println(karlPossessions.getPossessions());
+        System.out.println("Предметы продавца: ");
+        System.out.println(vendorPossessions.getPossessions());
+
+
         try {
-            map.addIstSveta(fireplace);
+            karl.returnToRoof(map);
+            map.addOnMap(apple1);
+            map.addOnMap(apple2);
+            map.addOnMap(apple3);
         }
-        catch (ArrayIndexOutOfBoundsException ex){
+        catch (NotEnoughSpaceException ex){
+            System.err.println("Место уже занято!");
+        }
+        catch (ArrayIndexOutOfBoundsException  e){
             System.err.println("Объект размещён за пределами карты!");
         }
-        catch (NotEnoughSpaceException e){
-            System.err.println(e.getMessage());
-        }
 
-        try {
-            map.addOnWire(apple1, wire);
-            map.addOnWire(apple2, wire);
-            map.addOnWire(apple3, wire);
-        }
-        catch (ArrayIndexOutOfBoundsException ex){
+        System.out.println();
 
-        }
+        map.addOnWire(apple1, wire);
+        map.addOnWire(apple2, wire);
 
+        map.showMap();
 
-        junior.eatApple(apple1);
+        map.addOnWire(apple3, wire);
+
+        mal.eatApple(apple1);
         karl.bake(apple1);
         karl.bake(apple2);
         karl.bake(apple3);
-        junior.eatApple(apple1);
-        junior.eatApple(apple1);
-        junior.eatApple(apple1);
+
+        System.out.println("Карлсон нанизал яблоки на проволоку и печет их над огнем.");
+        environment.setTimeOfDay(TimeOfDay.TWILIGHT);
+        System.out.println(environment.timeOfDay());
+        mal.eatApple(apple1);
+        mal.eatApple(apple1);
+        mal.eatApple(apple1);
+        map.deleteObj(apple1);
         karl.eatApple(apple2);
-        act.refreshEnvironment();
+        map.deleteObj(apple2);
 
-        junior.talk("Как хорошо, когда трещат поленья! -- Дни стали холодными. По всему видно, что пришла осень");
+        karlPossessions.removeItem(apple1);
+        karlPossessions.removeItem(apple2);
+        System.out.println("Малыш и Карлсон съели по яблоку");
 
-        map.moveObj(karl, 2,1);
-        System.out.println("Карлсон подошел к Камину");
+        environment.refreshEnvironment();
+        map.moveObj(karl,fireplace.getX()+1,fireplace.getY());
+        mal.talk("Как хорошо, когда трещат поленья! -- Дни стали холодными. По всему видно, что пришла осень");
 
+        environment.setTimeOfDay(TimeOfDay.NIGHT);
+        System.out.println(environment.timeOfDay());
 
-        act.refreshEnvironment(); // взял за руку
-
-        //karl.action(birch,1,fireplace::);
-        fireplace.refuel(birch1,1); // уверенно сказал
+        fireplace.refuel(birch1,1);
         map.deleteObj(birch1);
-        System.out.println("Карлсон вкинул бревно");
-        map.showLightMap();
-        act.refreshEnvironment();
+        lighting.showLightMap();
+        environment.refreshEnvironment();
         fireplace.refuel(birch1);
-        System.out.println("Карлсон вкинул бревно");
         map.deleteObj(birch2);
-        map.showLightMap();
-        act.refreshEnvironment();
-
+        lighting.showLightMap();
+        environment.refreshEnvironment();
 
         while(fireplace.isActive()){
-            map.showLightMap();
-            act.refreshEnvironment();
+            lighting.showLightMap();
+            environment.refreshEnvironment();
         }
         System.out.println("Камин прогорел");
 
+        map.moveObj(karl,lamp.getY(),lamp.getX()-1);
+        lamp.activate();
+        System.out.println("Карлсон зажег керосиновую лампу, что висела под потолком");
+        environment.addLightToList(lamp);
 
-        map.moveObj(karl,lamp.getX(),lamp.getY()-1);
-        System.out.println("Карлсон подлетел к лампе");
-        //!!!!!
-        karl.action(lamp::activate);
-        System.out.println("Карлсон включил лампу");
-        act.addLightToList(lamp);
-        map.leaveLightFrom(lamp);
+        lighting.leaveLightFrom(lamp);
 
+        lighting.addIstSveta(lamp,5);
 
+        environment.refreshEnvironment();
 
-        act.refreshEnvironment();
-        map.showLightMap();
+        map.moveObj(karl,mal.getX()-1,mal.getY());
 
-        junior.talk("Карлсон, не хочешь поиграть в трейдеров?");
+        lighting.showLightMap();
+        mal.talk("Карлсон, не хочешь поиграть в трейдеров?");
         karl.talk("Всегда Готов!");
 
-        act.refreshEnvironment();
+        environment.refreshEnvironment();
 
         for (Matter i : workbench.getItemlist()){
-            //junior.askFor(i)
-            if (i.getName() == "Kogsvort") {
+            if (i.getName().equals("Kogsvort")) {
                 juniorPossessions.trade(karlPossessions,i);
             }
+            else{
+                karl.talk(i.getName() + " я тебе не отдам!");
+            }
         }
-        karl.repairAlarm(alarm);
-        System.out.println(juniorPossessions.getPossessions());
-        System.out.println("This is very fun!");
-    }
 
+        karl.talk("Можешь взять этот будильник");
+        System.out.println("Вещи малыша: " + juniorPossessions.getPossessions());
+        System.out.println("Вещи Карлсона: " + karlPossessions.getPossessions());
+
+        mal.talk("Это очень увлекательно:)");
+        System.out.println(alarm.isBroken() ? "А будильник сломанный" : "С будильником все в порядке");
+
+    }
 }

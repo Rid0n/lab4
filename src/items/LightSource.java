@@ -5,7 +5,7 @@ import java.util.Objects;
 public abstract class LightSource extends Matter implements LightInterface {
     private boolean isLIT;
 
-    private int intensity=5;
+    private int intensity;
     public LightSource(int x, int y, boolean isLIT, String name){
         super(x,y,name);
         this.isLIT = isLIT;
@@ -30,6 +30,7 @@ public abstract class LightSource extends Matter implements LightInterface {
         return isLIT;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -44,5 +45,8 @@ public abstract class LightSource extends Matter implements LightInterface {
         result = 31 * result + Boolean.valueOf(isLIT).hashCode();
         return result;
     }
-
+    @Override
+    public String toString() {
+        return ("Light source type is " + getName() + " and it is at x" + getX() + "y" + getY());
+    }
 }

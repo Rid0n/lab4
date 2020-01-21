@@ -11,11 +11,16 @@ public class ItemMultiplied extends Matter {
         this.y2=y2;
 
     }
+
     public int getY2() {
         return y2;
     }
+
+
+
     public int getX2() {
         return x2;
     }
+
 
 }

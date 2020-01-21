@@ -7,7 +7,7 @@ abstract class Firewood extends Matter {
         super(x,y,name);
         this.size = size;
     }
-    public int getBurnTime() {
+    public int getBurntime() {
         return this.size;
     }
     public void setSize(int size){
